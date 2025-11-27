@@ -1,7 +1,9 @@
 const express=require("express");
 const app=express();//application of express
 
-const adminauth = require("./middlewares/auth"); 
+const adminauth = require("./middlewares/auth");
+
+
 
 app.use("/admin",adminauth);
 
@@ -17,6 +19,14 @@ res.send("Hello from route handler");
 console.log("hello from console");
 next();
 });
+
+
+
+app.get("/trigger-error", (req, res, next) => {
+    next(new Error("test error"));
+});
+
+
 
 app.listen(3000,()=>{
     console.log("server is succesfully");
