@@ -1,8 +1,8 @@
 const express=require("express");
 const connectDB=require("../src/config/database");
 const app=express();//application of express
-const User=require("../src/models/user");
 const { Error } = require("mongoose");
+ const jwt=require("jsonwebtoken");
 // const adminauth = require("./middlewares/auth");
 
 
@@ -27,96 +27,87 @@ const { Error } = require("mongoose");
 // app.get("/trigger-error", (req, res, next) => {
 //     next(new Error("test error"));
 // });
-
+const cookieparser=require("cookie-parser");
 app.use(express.json());
-app.post("/signup",async (req,res)=>{
-   
-    const userObj={
-        firstName:"virat",
-        lastName:"kohli",
-        emailId:"virat@kohli.com",
-        password:"virat@123"
-    }
+app.use(cookieparser());
 
-    try{
-    //creating a new instance of the user model
-//const user=new User(userObj);
-const user=new User(req.body);
-await user.save(); //save at db
-    }catch(err){
-        res.status(400).send("Error"+err.message);
-    }
-res.send("user added");
-});
+const authRouter=require("../routes/auth");
+const profileRouter=require("../routes/Profile");
+const requestRouter=require("../routes/requests");
 
+app.use("/",authRouter);
+app.use("/",profileRouter);
+app.use("/",requestRouter);
+
+// craeted without authentication
 //findinf one user
-app.get("/user",async (req,res)=>{
-    const email=req.body.emailId;
-    try{
-     const user= await User.find({emailId:email});
-   if(user.length===0){
-    res.status(404).send("user not found");
-   }else{
+// app.get("/user",async (req,res)=>{
+//     const email=req.body.emailId;
+//     try{
+//      const user= await User.find({emailId:email});
+//    if(user.length===0){
+//     res.status(404).send("user not found");
+//    }else{
 
-     res.send(user);
-   }
+//      res.send(user);
+//    }
    
-    }
-    catch(err){
-res.status(400).send("something went wrong");
-    }
+//     }
+//     catch(err){
+// res.status(400).send("something went wrong");
+//     }
    
-})
+// })
 
 
-app.get("/feed",async(req,res)=>{
-    try{
-        const users=await User.find({});
-        res.send(users);
-    }catch(err){
-        res.send("wrong");
-    }
+// app.get("/feed",async(req,res)=>{
+//     try{
+//         const users=await User.find({});
+//         res.send(users);
+//     }catch(err){
+//         res.send("wrong");
+//     }
 
-})
+// })
 
-app.delete("/user/",async (req,res)=>{
-    const userId=req.body.userId;
-    try{
-        const user=await User.findByIdAndDelete(userId);
-        res.send("user deleted sucessfully");
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
-})
+// app.delete("/user/",async (req,res)=>{
+//     const userId=req.body.userId;
+//     try{
+//         const user=await User.findByIdAndDelete(userId);
+//         res.send("user deleted sucessfully");
+//     }catch(err){
+//         res.status(400).send("something went wrong");
+//     }
+// })
 
-app.patch("/user/:userid",async(req,res)=>{
-    const userId = req.params.userid;  
-   const data=req.body;
+// app.patch("/user/:userid",async(req,res)=>{
+//     const userId = req.params.userid;  
+//    const data=req.body;
 
 
-try{
+// try{
     
-const ALLOWED_UPDATES=[
-   "gender","age"
-];
+// const ALLOWED_UPDATES=[
+//    "gender","age"
+// ];
 
-const isUpdateAllowed=Object.keys(data).every(k=>ALLOWED_UPDATES.includes(k));
+// const isUpdateAllowed=Object.keys(data).every(k=>ALLOWED_UPDATES.includes(k));
 
-if(!isUpdateAllowed){
-    throw new Error("update not allow");
-}
+// if(!isUpdateAllowed){
+//     throw new Error("update not allow");
+// }
 
-const user=await User.findByIdAndUpdate({_id:userId},data,{
-   new: true, 
-    returnDocument:"after",
-    runValidators:true
-});
-res.send("user update successfully");
-}
-catch(err){
-        res.status(400).send("something went wrong");
-    }
-});
+// const user=await User.findByIdAndUpdate({_id:userId},data,{
+//    new: true, 
+//     returnDocument:"after",
+//     runValidators:true
+// });
+// res.send("user update successfully");
+// }
+// catch(err){
+//         res.status(400).send("something went wrong");
+//     }
+// });
 
 
 
