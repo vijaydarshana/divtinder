@@ -58,11 +58,16 @@ if(isPasswprdvalid){
 const token= user.getJWT();
 
 // add the token to cookie and send the response back to the user
-res.cookie("token",token);
+res.cookie("token",token,{
+      httpOnly: true,
+      sameSite: "lax",   // REQUIRED for localhost
+      secure: false,    // REQUIRED for http
+    
+});
 
 
 
-    res.send("Login Successfull");
+    res.send(user);
 }else{
     throw new Error("Invaild credentials");
 }
