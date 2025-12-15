@@ -9,7 +9,8 @@ const userSchema=new mongoose.Schema({
         required:true,
     },
     lastName:{
-        type:String
+        type:String,
+        default: ""
     },
     emailId:{
         type:String,
@@ -37,7 +38,26 @@ if(!validator.isEmail(value)){
             }
         },
     },   
+photoUrl: {
+  type: String,
+  default: undefined,
+  validate(value) {
+    if (value === undefined) return;
+
+    // allow https URLs
+    if (validator.isURL(value, { require_protocol: true })) return;
+
+    // allow base64 images
+    if (value.startsWith("data:image/")) return;
+
+    throw new Error("Invalid photo URL");
+  },
 },
+
+
+
+  },
+
 {
     timestamps:true,
 });

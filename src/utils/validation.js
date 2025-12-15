@@ -12,10 +12,11 @@ const validateSignUpData = (req) => {
   } else if (!validator.isStrongPassword(password)) {
     throw new Error("password is not strong");
   }
+  return true;
 };
 
 const validateProfileEditData=(req)=>{
-  const allowedEditField=["firstName","lastName","emailId"];
+  const allowedEditField=["firstName","lastName","emailId","age","gender","photoUrl"];
 
   const isEditAllowed=Object.keys(req.body).every(field=>allowedEditField.includes(field));
   return isEditAllowed;

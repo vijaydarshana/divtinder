@@ -30,6 +30,7 @@ res.status(400).send("something went wrong");
 
 profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
 try{
+       
     if(!validateProfileEditData(req)){
         throw new Error("Invalid Edit Request");
     }
